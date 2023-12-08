@@ -44,7 +44,17 @@ cat << EOF > /etc/profile.d/prompt.sh
 PS1="\n\e[0;34m\w\e[m\n\e[0;35m>\e[m "
 EOF
 
+echo -e "Welcome to Nyx v0.1.0\n" > /etc/motd
 echo -e "\nHappy hacking!" > /etc/motd
+cat << EOF > /usr/local/bin/hello
+#!/bin/sh
+cat /etc/issue
+printf "Username: "
+read username
+exec /bin/login "$username"
+EOF
+chmod a+x /usr/local/bin/hello
+sed -i "%s/getty/getty -n -l /usr/local/bin/login/g" /etc/inittab
 
 apk update
 apk add curl bash
