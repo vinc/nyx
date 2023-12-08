@@ -1,7 +1,9 @@
 #!/bin/bash
 
+setup-hostname nyx
 setup-interfaces -ar
 setup-apkrepos -c -1
+#setup-disk -m sys /dev/sda
 
 # BEGIN VGA
 
