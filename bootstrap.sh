@@ -54,7 +54,8 @@ read username
 exec /bin/login "$username"
 EOF
 chmod a+x /usr/local/bin/hello
-sed -i "%s/getty/getty -n -l /usr/local/bin/login/g" /etc/inittab
+sed -i "s/getty 38400/getty -n -l \/usr\/local\/bin\/login 38400/g" /etc/inittab
+sed -i "s/getty -L 0/getty -n -l \/usr\/local\/bin\/login -L 0/g" /etc/inittab
 
 apk update
 apk add curl bash
