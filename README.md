@@ -15,10 +15,11 @@ Download Alpine Linux base image:
 
 Run the image with QEMU:
 
+    $ wget https://raw.githubusercontent.com/vinc/nyx/main/qemu.sh
     $ bash qemu.sh
 
 Log in as root inside QEMU then run the following commands:
 
     # setup-interfaces -ar
-    # wget http://moros.cc/bootstrap.sh
-    # sh bootstrap.sh
+    # wget https://raw.githubusercontent.com/vinc/nyx/main/bootstrap.sh
+    # bash bootstrap.sh
