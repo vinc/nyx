@@ -10,19 +10,22 @@ setup-disk -m sys /dev/sda
 
 TARGET="/mnt"
 
+mount /dev/sda3 "$TARGET"
+mount /dev/sda1 "$TARGET/boot"
 apk --root "$TARGET" update
 apk --root "$TARGET" add vim git make qemu-img qemu-system-x86_64
 
 MOROS="https://raw.githubusercontent.com/vinc/moros/trunk"
+
 wget "$MOROS/dsk/ini/palettes/gruvbox-dark.sh" \
   -O "$TARGET/etc/profile.d/palette.sh"
-wget "$MOROS/dsk/ini/fonts/zap-light-8x16.psf" \
-  -O "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
-
 sed -i "s/print/echo -ne/g" "$TARGET/etc/profile.d/palette.sh"
 sed -i "s/\\\e\[1A//g"  "$TARGET/etc/profile.d/palette.sh"
 sh "$TARGET/etc/profile.d/palette.sh"
 
+mkdir "$TARGET/usr/share/consolefonts"
+wget "$MOROS/dsk/ini/fonts/zap-light-8x16.psf" \
+  -O "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
 echo 'consolefont="zap-light-8x16"' > "$TARGET/etc/conf.d/consolefont"
 setfont "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
 

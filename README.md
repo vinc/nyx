@@ -11,15 +11,27 @@ written in Rust by [Vincent Ollivier][2].
 
 Download Alpine Linux base image:
 
-    $ wget https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.0-x86_64.iso
+```sh
+export url=https://dl-cdn.alpinelinux.org/alpine
+export iso=$url/v3.22/releases/x86_64/alpine-virt-3.22.1-x86_64.iso
+wget $iso
+wget $iso.sha256
+sha256sum -c alpine-*.iso.sha256
+```
 
 Run the image with QEMU:
 
-    $ wget https://raw.githubusercontent.com/vinc/nyx/main/qemu.sh
-    $ bash qemu.sh
+```sh
+wget https://raw.githubusercontent.com/vinc/nyx/main/qemu.sh
+sh qemu.sh alpine-*.iso
+```
 
-Log in as root inside QEMU then run the following commands:
+Log in as `root` inside QEMU then run the following commands:
 
-    # setup-interfaces -ar
-    # wget https://raw.githubusercontent.com/vinc/nyx/main/bootstrap.sh
-    # bash bootstrap.sh
+```sh
+setup-keymap us us-dvorak
+setup-interfaces -ar
+wget https://raw.githubusercontent.com/vinc/nyx/main/bootstrap.sh
+sh bootstrap.sh
+reboot
+```
