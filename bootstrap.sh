@@ -17,16 +17,33 @@ mount /dev/sda1 "$TARGET/boot"
 apk --root "$TARGET" update
 apk --root "$TARGET" add vim git make qemu-img qemu-system-x86_64
 
-MOROS="https://raw.githubusercontent.com/vinc/moros/trunk"
+GITHUB="https://raw.githubusercontent.com"
 
-wget "$MOROS/dsk/ini/palettes/gruvbox-dark.sh" \
+wget "$GITHUB/vinc/moros/trunk/dsk/ini/palettes/gruvbox-dark.sh" \
   -O "$TARGET/etc/profile.d/palette.sh"
 sed -i "s/print/printf/g" "$TARGET/etc/profile.d/palette.sh"
-sed -i "s/\\\e\[1A//g"  "$TARGET/etc/profile.d/palette.sh"
+sed -i "s/\\\e\[1A//g" "$TARGET/etc/profile.d/palette.sh"
+echo "chvt 2 && chvt 1" >> "$TARGET/etc/profile.d/palette.sh"
 sh "$TARGET/etc/profile.d/palette.sh"
+cat << EOF > "$TARGET/etc/init.d/consolepalette"
+#!/sbin/openrc-run
+
+name="consolepalette"
+description="Set console palette"
+
+depend() {
+    need root
+}
+
+start() {
+    sh /etc/profile.d/palette.sh
+    return 0
+}
+EOF
+ln -s /etc/init.d/consolepalette "$TARGET/etc/runlevels/boot/consolepalette"
 
 mkdir "$TARGET/usr/share/consolefonts"
-wget "$MOROS/dsk/ini/fonts/zap-light-8x16.psf" \
+wget "$GITHUB/vinc/moros/trunk/dsk/ini/fonts/zap-light-8x16.psf" \
   -O "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
 echo 'consolefont="zap-light-8x16.psf"' > "$TARGET/etc/conf.d/consolefont"
 setfont "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
@@ -56,15 +73,15 @@ printf "Username: "
 read username
 exec /bin/login "\$username"
 EOF
-chmod a+x "$TARGET/usr/local/bin/login"
+chmod +x "$TARGET/usr/local/bin/login"
 sed -i "s/getty 38400/getty -n -l \/usr\/local\/bin\/login 38400/g" \
   "$TARGET/etc/inittab"
 sed -i "s/getty -L 0/getty -n -l \/usr\/local\/bin\/login -L 0/g" \
   "$TARGET/etc/inittab"
 
-#wget https://raw.githubusercontent.com/vinc/pkg/master/pkg.sh
-#mv pkg.sh /usr/local/bin/pkg
-#chmod a+x /usr/local/bin/pkg
+wget "$GITHUB/vinc/pkg/master/pkg.sh"
+mv pkg.sh "$TARGET/usr/local/bin/pkg"
+chmod +x "$TARGET/usr/local/bin/pkg"
 
 #git clone https://github.com/vinc/moros
 #cd moros
