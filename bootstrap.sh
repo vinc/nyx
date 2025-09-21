@@ -19,7 +19,7 @@ MOROS="https://raw.githubusercontent.com/vinc/moros/trunk"
 
 wget "$MOROS/dsk/ini/palettes/gruvbox-dark.sh" \
   -O "$TARGET/etc/profile.d/palette.sh"
-sed -i "s/print/echo -ne/g" "$TARGET/etc/profile.d/palette.sh"
+sed -i "s/print/printf/g" "$TARGET/etc/profile.d/palette.sh"
 sed -i "s/\\\e\[1A//g"  "$TARGET/etc/profile.d/palette.sh"
 sh "$TARGET/etc/profile.d/palette.sh"
 
@@ -31,9 +31,11 @@ setfont "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
 
 cat << EOF > "$TARGET/etc/profile.d/aliases.sh"
 alias copy="cp"
+alias drop="rm"
 alias edit="vim -p"
 alias list="ls -lh"
 alias move="mv"
+alias print="printf"
 alias read="cat"
 alias view="less"
 EOF
