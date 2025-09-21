@@ -5,6 +5,7 @@ set -x
 # Stage 1
 
 setup-hostname nyx
+setup-dns 8.8.8.8
 setup-apkrepos -c -1
 setup-disk -m sys /dev/sda
 
@@ -14,6 +15,10 @@ TARGET="/mnt"
 
 mount /dev/sda3 "$TARGET"
 mount /dev/sda1 "$TARGET/boot"
+
+cp /etc/network/interfaces "$TARGET/etc/network/interfaces"
+ln -s /etc/init.d/networking "$TARGET/etc/runlevels/boot/networking"
+
 apk --root "$TARGET" update
 apk --root "$TARGET" add vim git make qemu-img qemu-system-x86_64
 
@@ -40,13 +45,15 @@ start() {
     return 0
 }
 EOF
+chmod +x "$TARGET/etc/init.d/consolepalette"
 ln -s /etc/init.d/consolepalette "$TARGET/etc/runlevels/boot/consolepalette"
 
 mkdir "$TARGET/usr/share/consolefonts"
 wget "$GITHUB/vinc/moros/trunk/dsk/ini/fonts/zap-light-8x16.psf" \
   -O "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
-echo 'consolefont="zap-light-8x16.psf"' > "$TARGET/etc/conf.d/consolefont"
-setfont "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
+gzip "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
+echo 'consolefont="zap-light-8x16.psf.gz"' > "$TARGET/etc/conf.d/consolefont"
+setfont "$TARGET/usr/share/consolefonts/zap-light-8x16.psf.gz"
 ln -s /etc/init.d/consolefont "$TARGET/etc/runlevels/boot/consolefont"
 
 cat << EOF > "$TARGET/etc/profile.d/aliases.sh"
