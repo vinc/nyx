@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 # Stage 1
 
 setup-hostname nyx
@@ -26,8 +28,9 @@ sh "$TARGET/etc/profile.d/palette.sh"
 mkdir "$TARGET/usr/share/consolefonts"
 wget "$MOROS/dsk/ini/fonts/zap-light-8x16.psf" \
   -O "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
-echo 'consolefont="zap-light-8x16"' > "$TARGET/etc/conf.d/consolefont"
+echo 'consolefont="zap-light-8x16.psf"' > "$TARGET/etc/conf.d/consolefont"
 setfont "$TARGET/usr/share/consolefonts/zap-light-8x16.psf"
+ln -s /etc/init.d/consolefont "$TARGET/etc/runlevels/boot/consolefont"
 
 cat << EOF > "$TARGET/etc/profile.d/aliases.sh"
 alias copy="cp"
@@ -35,7 +38,7 @@ alias drop="rm"
 alias edit="vim -p"
 alias list="ls -lh"
 alias move="mv"
-alias print="printf"
+alias print="echo"
 alias read="cat"
 alias view="less"
 EOF
@@ -44,14 +47,14 @@ cat << EOF > "$TARGET/etc/profile.d/prompt.sh"
 PS1="\n\e[0;34m\w\e[m\n\e[0;35m>\e[m "
 EOF
 
-echo -e "Welcome to Nyx v0.3.0\n" > "$TARGET/etc/motd"
-echo -e "\nHappy hacking!" >> "$TARGET/etc/motd"
+echo -e "Welcome to Nyx 0.3.0\n" > "$TARGET/etc/issue"
+echo -e "\nHappy hacking!" > "$TARGET/etc/motd"
 cat << EOF > "$TARGET/usr/local/bin/login"
 #!/bin/sh
 cat /etc/issue
 printf "Username: "
 read username
-exec /bin/login "$username"
+exec /bin/login "\$username"
 EOF
 chmod a+x "$TARGET/usr/local/bin/login"
 sed -i "s/getty 38400/getty -n -l \/usr\/local\/bin\/login 38400/g" \
