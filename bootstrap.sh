@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 setup-hostname nyx
 setup-interfaces -ar
 setup-apkrepos -c -1
-#setup-disk -m sys /dev/sda
+setup-disk -m sys /dev/sda
 
 setup-keymap us us-dvorak
 
@@ -12,7 +12,7 @@ MOROS="https://raw.githubusercontent.com/vinc/moros/trunk"
 wget "$MOROS/dsk/ini/palettes/gruvbox-dark.sh" -O palette.sh
 sed -i "s/print/echo -ne/g" palette.sh
 sed -i "s/\\\e\[1A//g" palette.sh
-bash palette.sh
+sh palette.sh
 
 wget "$MOROS/dsk/ini/fonts/zap-light-8x16.psf" -O font.psf
 setfont font.psf
@@ -32,20 +32,20 @@ EOF
 
 echo -e "Welcome to Nyx v0.2.0\n" > /etc/motd
 echo -e "\nHappy hacking!" > /etc/motd
-cat << EOF > /usr/local/bin/hello
+cat << EOF > /usr/local/bin/login
 #!/bin/sh
 cat /etc/issue
 printf "Username: "
 read username
 exec /bin/login "$username"
 EOF
-chmod a+x /usr/local/bin/hello
+chmod a+x /usr/local/bin/login
 sed -i "s/getty 38400/getty -n -l \/usr\/local\/bin\/login 38400/g" /etc/inittab
 sed -i "s/getty -L 0/getty -n -l \/usr\/local\/bin\/login -L 0/g" /etc/inittab
 
 apk update
-apk add curl bash
-#apk add vim
+apk add vim
+#apk add curl bash
 #apk add git make qemu-img qemu-system-x86_64
 
 #wget https://raw.githubusercontent.com/vinc/pkg/master/pkg.sh
